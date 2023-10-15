@@ -2,4 +2,6 @@
 
 declare(strict_types=1);
 
-echo ('Hellow World!');
+use App\RMVC\App;
+
+App::run();
