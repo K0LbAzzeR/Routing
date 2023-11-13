@@ -6,7 +6,25 @@ namespace App\RMVC\Route;
 
 class RouteDispatcher
 {
+    /**
+     * Route configuration
+     *
+     * @var RouteConfiguration
+     */
+    private RouteConfiguration $routeConfiguration;
+
+    /**
+     * Request URI
+     *
+     * @var string
+     */
     private string $requestUri = '/';
+
+    /**
+     * Param map
+     *
+     * @var array
+     */
     private array $paramMap = [];
 
     /**
@@ -17,6 +35,15 @@ class RouteDispatcher
         $this->routeConfiguration = $routeConfiguration;
     }
 
+    /**
+     * Process:
+     * saveRequestUri() ->
+     * createParamMap() ->
+     * makeRegexRequest() ->
+     * run()
+     *
+     * @return void
+     */
     public function process(): void
     {
         $this->saveRequestUri();
@@ -25,9 +52,69 @@ class RouteDispatcher
         $this->run();
     }
 
+    /**
+     * Save request URI
+     *
+     * @return void
+     */
+    private function saveRequestUri(): void
+    {
+        if ($_SERVER["REQUEST_URI"] !== '/') {
+            $this->setRequestUri($this->removeSlashesFromString($_SERVER["REQUEST_URI"]));
+            $route = $this->routeConfiguration->getRoute();
+            $this->routeConfiguration->setRoute($this->removeSlashesFromString($route));
+        }
+    }
+
+    /**
+     * Create param map
+     *
+     * @return void
+     */
+    private function createParamMap(): void
+    {
+        $paramMap = [];
+        $routeArray = explode('/', $this->routeConfiguration->getRoute());
+
+        foreach ($routeArray as $paramKey => $param) {
+            if (preg_match('/{.*}/', $param)) {
+                $paramMap[$paramKey] = $this->removeCurlyBraceFromString($param);
+            }
+        }
+
+        $this->setParamMap($paramMap);
+    }
+
+    /**
+     * Make regex request
+     *
+     * @return void
+     */
+    private function makeRegexRequest(): void
+    {
+        $requestUriArray = explode('/', $this->getRequestUri());
+
+        foreach ($this->getParamMap() as $paramKey => $param) {
+            if (!isset($requestUriArray[$paramKey])) {
+                return;
+            }
+            $requestUriArray[$paramKey] = '{.*}';
+        }
+
+        $this->setRequestUri(implode('/', $requestUriArray));
+        $this->setRequestUri($this->prepareRegex($this->getRequestUri()));
+    }
+
+    /**
+     * Run
+     *
+     * @return void
+     */
     private function run(): void
     {
-        if (preg_match("/$this->getRequestUri()/", $this->routeConfiguration->getRoute())) {
+        $pattern = '/' . $this->getRequestUri() . '/';
+
+        if (preg_match($pattern, $this->routeConfiguration->getRoute())) {
             $this->render();
         }
     }
@@ -37,58 +124,9 @@ class RouteDispatcher
         $className = $this->routeConfiguration->getController();
         $action = $this->routeConfiguration->getAction();
 
-        //(new $className)->$action();
-
-        echo '<hr><pre>';
-        var_dump((new $className)->$action());
-        echo '</pre><hr>';
+        echo (new $className())->$action();
 
         die();
-    }
-
-    private function getRequestUri(): string
-    {
-        return $this->requestUri;
-    }
-
-    private function setRequestUri(string $requestUri): void
-    {
-        $this->requestUri = $requestUri;
-    }
-
-    private function getParamMap(): array
-    {
-        return $this->paramMap;
-    }
-
-    private function setParamMap(array $paramMap): void
-    {
-        $this->paramMap = $paramMap;
-    }
-
-    private function createParamMap(): void
-    {
-        $paramMap = [];
-        $routeArray = explode('/', $this->routeConfiguration->getRoute());
-
-        foreach ($routeArray as $paramKey => $param) {
-
-            if (preg_match('/{.*}/', $param)) {
-                $paramMap[$paramKey] = $this->removeCurlyBraceFromString($param);
-            }
-        }
-        $this->setParamMap($paramMap);
-    }
-
-    private RouteConfiguration $routeConfiguration;
-
-    private function saveRequestUri(): void
-    {
-        if ($_SERVER["REQUEST_URI"] !== '/') {
-            $this->setRequestUri($this->removeSlashesFromString($_SERVER["REQUEST_URI"]));
-            $route = $this->routeConfiguration->getRoute();
-            $this->routeConfiguration->setRoute($this->removeSlashesFromString($route));
-        }
     }
 
     /**
@@ -113,23 +151,56 @@ class RouteDispatcher
         return preg_replace('/(^{)|(}$)/', '', $string);
     }
 
+    /**
+     * Prepare regex
+     *
+     * @param string $regex
+     * @return array|string
+     */
     private function prepareRegex(string $regex): array|string
     {
         return str_replace('/', '\/', $regex);
     }
 
-    private function makeRegexRequest(): void
+    /**
+     * Get request URI
+     *
+     * @return string
+     */
+    private function getRequestUri(): string
     {
-        $requestUriArray = explode('/', $this->getRequestUri());
+        return $this->requestUri;
+    }
 
-        foreach ($this->getParamMap() as $paramKey => $param) {
-            if (!isset($requestUriArray[$paramKey])) {
-                return;
-            }
-            $requestUriArray[$paramKey] = '{*.}';
-        }
+    /**
+     * Set request URI
+     *
+     * @param string $requestUri
+     * @return void
+     */
+    private function setRequestUri(string $requestUri): void
+    {
+        $this->requestUri = $requestUri;
+    }
 
-        $this->setRequestUri(implode('/', $requestUriArray));
-        $this->setRequestUri($this->prepareRegex($this->getRequestUri()));
+    /**
+     * Get param map
+     *
+     * @return array
+     */
+    private function getParamMap(): array
+    {
+        return $this->paramMap;
+    }
+
+    /**
+     * Set param map
+     *
+     * @param array $paramMap
+     * @return void
+     */
+    private function setParamMap(array $paramMap): void
+    {
+        $this->paramMap = $paramMap;
     }
 }

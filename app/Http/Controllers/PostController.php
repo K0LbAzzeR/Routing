@@ -8,11 +8,16 @@ class PostController extends Controller
 {
     public function index(): int
     {
-        return 111111;
+        //        echo __METHOD__;
+        //        echo '<hr><pre>';
+        //        var_dump(11111);
+        //        echo '</pre><hr>';
+
+        return 111;
     }
 
     public function show(): int
     {
-        return 222222;
+        return 222;
     }
 }

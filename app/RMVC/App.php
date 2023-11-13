@@ -9,13 +9,16 @@ use App\RMVC\Route\RouteDispatcher;
 
 class App
 {
+    /**
+     * Run app
+     *
+     * @return void
+     */
     public static function run(): void
     {
         foreach (Route::getRoutesGet() as $routeConfiguration) {
-
             $routeDispatcher = new RouteDispatcher($routeConfiguration);
             $routeDispatcher->process();
-
         }
     }
 }
