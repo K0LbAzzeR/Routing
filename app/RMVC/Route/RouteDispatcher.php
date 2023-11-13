@@ -7,18 +7,11 @@ namespace App\RMVC\Route;
 class RouteDispatcher
 {
     private string $requestUri = '/';
-
+    private array $paramMap = [];
     public function getRequestUri(): string
     {
         return $this->requestUri;
     }
-
-    public function setRequestUri(string $requestUri): void
-    {
-        $this->requestUri = $requestUri;
-    }
-    private RouteConfiguration $routeConfiguration;
-
     /**
      * @param RouteConfiguration $routeConfiguration
      */
@@ -26,6 +19,12 @@ class RouteDispatcher
     {
         $this->routeConfiguration = $routeConfiguration;
     }
+
+    public function setRequestUri(string $requestUri): void
+    {
+        $this->requestUri = $requestUri;
+    }
+    private RouteConfiguration $routeConfiguration;
 
     private function saveRequestUri(): void
     {

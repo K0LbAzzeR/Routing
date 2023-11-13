@@ -15,7 +15,7 @@ class App
 
             $routeDispatcher = new RouteDispatcher($routeConfiguration);
             $routeDispatcher->process();
-            
+
         }
     }
 }
