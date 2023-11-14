@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\RMVC\Route;
 
+use JetBrains\PhpStorm\NoReturn;
+
 class RouteDispatcher
 {
     /**
@@ -26,6 +28,13 @@ class RouteDispatcher
      * @var array
      */
     private array $paramMap = [];
+
+    /**
+     * Param request map
+     *
+     * @var array
+     */
+    private array $paramRequestMap = [];
 
     /**
      * @param RouteConfiguration $routeConfiguration
@@ -92,17 +101,21 @@ class RouteDispatcher
      */
     private function makeRegexRequest(): void
     {
+        $paramRequestMap = [];
         $requestUriArray = explode('/', $this->getRequestUri());
 
         foreach ($this->getParamMap() as $paramKey => $param) {
             if (!isset($requestUriArray[$paramKey])) {
                 return;
             }
+            // TODO: Get rid of direct access to the field
+            $this->paramRequestMap[$param] = $requestUriArray[$paramKey];
             $requestUriArray[$paramKey] = '{.*}';
         }
 
         $this->setRequestUri(implode('/', $requestUriArray));
         $this->setRequestUri($this->prepareRegex($this->getRequestUri()));
+        //$this->setParamRequestMap();
     }
 
     /**
@@ -119,12 +132,18 @@ class RouteDispatcher
         }
     }
 
-    private function render(): void
+    /**
+     * Render
+     *
+     * @return void
+     */
+    #[NoReturn] private function render(): void
     {
         $className = $this->routeConfiguration->getController();
         $action = $this->routeConfiguration->getAction();
 
-        echo (new $className())->$action();
+        // TODO: Get rid of direct access to the field
+        echo (new $className())->$action(...$this->paramRequestMap);
 
         die();
     }
@@ -202,5 +221,26 @@ class RouteDispatcher
     private function setParamMap(array $paramMap): void
     {
         $this->paramMap = $paramMap;
+    }
+
+    /**
+     * Get param request map
+     *
+     * @return array
+     */
+    private function getParamRequestMap(): array
+    {
+        return $this->paramRequestMap;
+    }
+
+    /**
+     * Set param request map
+     *
+     * @param array $paramRequestMap
+     * @return void
+     */
+    private function setParamRequestMap(array $paramRequestMap): void
+    {
+        $this->paramRequestMap = $paramRequestMap;
     }
 }

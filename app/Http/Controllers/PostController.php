@@ -6,18 +6,17 @@ namespace App\Http\Controllers;
 
 class PostController extends Controller
 {
-    public function index(): int
+    public function index()
     {
-        //        echo __METHOD__;
-        //        echo '<hr><pre>';
-        //        var_dump(11111);
-        //        echo '</pre><hr>';
-
         return 111;
     }
 
-    public function show(): int
+    public function show($post, $bla)
     {
-        return 222;
+//        echo __METHOD__;
+//        echo '<hr><pre>';
+//        var_dump($this->paramRequestMap);
+//        echo '</pre><hr>';
+        return $bla;
     }
 }
