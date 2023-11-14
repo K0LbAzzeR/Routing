@@ -9,5 +9,26 @@
 </head>
 <body>
 This is index page
+
+<div>
+    Store
+    <div>
+        <form action="/posts" method="post">
+            <input type="text" placeholder="value" name="title">
+            <input type="submit">
+        </form>
+    </div>
+</div>
+<div>
+    This is title
+    <div>
+        <?php
+
+        if (isset($_SESSION['message'])) {
+            echo $_SESSION['message'];
+        }
+        ?>
+    </div>
+</div>
 </body>
 </html>

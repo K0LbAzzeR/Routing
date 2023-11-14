@@ -131,8 +131,6 @@ class RouteDispatcher
 
             $this->render();
         }
-
-
     }
 
     /**

@@ -8,7 +8,8 @@
     <title>SHOW</title>
 </head>
 <body>
-This is show page
-    ID <?php echo $post; ?>
+This is show page<br>
+ID <?php
+echo $post; ?>
 </body>
 </html>
