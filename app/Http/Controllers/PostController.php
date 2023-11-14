@@ -4,19 +4,33 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\RMVC\View\View;
+
 class PostController extends Controller
 {
-    public function index()
+    /**
+     * Action index
+     *
+     * @return string|false
+     */
+    public function index(): string|false
     {
-        return 111;
+        return View::view('post.index');
     }
 
-    public function show($post, $bla)
+    /**
+     * Action show
+     *
+     * @param ...$arguments
+     * @return string|false
+     */
+    public function show(...$arguments): string|false
     {
-//        echo __METHOD__;
-//        echo '<hr><pre>';
-//        var_dump($this->paramRequestMap);
-//        echo '</pre><hr>';
-        return $bla;
+        //        echo __METHOD__, '<br>';
+        //        echo '<hr><pre>';
+        //        var_dump(...$arguments);
+        //        echo '</pre><hr>';
+
+        return View::view('post.show');
     }
 }

@@ -128,8 +128,11 @@ class RouteDispatcher
         $pattern = '/' . $this->getRequestUri() . '/';
 
         if (preg_match($pattern, $this->routeConfiguration->getRoute())) {
+
             $this->render();
         }
+
+
     }
 
     /**
@@ -142,10 +145,10 @@ class RouteDispatcher
         $className = $this->routeConfiguration->getController();
         $action = $this->routeConfiguration->getAction();
 
-        // TODO: Get rid of direct access to the field
-        echo (new $className())->$action(...$this->paramRequestMap);
+        echo (new $className())->$action(...$this->getParamRequestMap());
 
-        die();
+        // The route is found, we stop the method
+        exit();
     }
 
     /**
