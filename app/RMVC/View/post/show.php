@@ -9,5 +9,6 @@
 </head>
 <body>
 This is show page
+    ID <?php echo $post; ?>
 </body>
 </html>

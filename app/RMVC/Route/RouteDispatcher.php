@@ -144,8 +144,16 @@ class RouteDispatcher
     {
         $className = $this->routeConfiguration->getController();
         $action = $this->routeConfiguration->getAction();
+        $arguments = $this->getParamRequestMap();
 
-        echo (new $className())->$action(...$this->getParamRequestMap());
+        //        echo '<hr><pre>';
+        //        echo __METHOD__, '<br>';
+        //        var_dump($className);
+        //        var_dump($action);
+        //        var_dump($arguments);
+        //        echo '</pre><hr>';
+
+        echo (new $className())->$action(...$arguments);
 
         // The route is found, we stop the method
         exit();

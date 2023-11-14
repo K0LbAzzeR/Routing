@@ -14,18 +14,26 @@ class View
     private static string $path;
 
     /**
+     * Data content array
+     *
+     * @var array|null
+     */
+    private static ?array $data;
+
+    /**
      * View content
      *
      * @param string $string
+     * @param array $data
      * @return string|false
      */
-    public static function view(string $string): string|false
+    public static function view(string $string, array $data = []): string|false
     {
+        self::$data = $data;
         self::$path = __DIR__ . '/' . str_replace('.', '/', $string) . '.php';
 
         return self::getContent();
     }
-
 
     /**
      * Ob get content
@@ -34,6 +42,8 @@ class View
      */
     private static function getContent(): string|false
     {
+        extract(self::$data);
+
         ob_start();
         include self::$path;
         $html = ob_get_contents();

@@ -21,16 +21,11 @@ class PostController extends Controller
     /**
      * Action show
      *
-     * @param ...$arguments
-     * @return string|false
+     * @param string $post
+     * @return string
      */
-    public function show(...$arguments): string|false
+    public function show(string $post): string
     {
-        //        echo __METHOD__, '<br>';
-        //        echo '<hr><pre>';
-        //        var_dump(...$arguments);
-        //        echo '</pre><hr>';
-
-        return View::view('post.show');
+        return View::view('post.show', compact('post'));
     }
 }
